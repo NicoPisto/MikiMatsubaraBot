@@ -1,0 +1,12 @@
+# Segredos — NUNCA commitar o token!
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDEs
+.vscode/
+.idea/
