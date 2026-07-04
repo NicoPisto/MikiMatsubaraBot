@@ -1,5 +1,6 @@
-# Segredos — NUNCA commitar o token!
+# Segredos — NUNCA commitar o token nem cookies!
 .env
+cookies.txt
 
 # Python
 __pycache__/

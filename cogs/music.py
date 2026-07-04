@@ -2,6 +2,7 @@ import asyncio
 import random
 from collections import deque
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import discord
 import yt_dlp
@@ -16,6 +17,13 @@ YTDL_OPTIONS = {
     "extract_flat": False,
     "skip_download": True,
 }
+
+# O YouTube bloqueia IPs de datacenter (Oracle, AWS...) com "Sign in to
+# confirm you're not a bot". Exporte os cookies de uma conta logada para
+# um cookies.txt na raiz do projeto que a Miki passa a usá-los (ver README).
+COOKIES_FILE = Path(__file__).resolve().parent.parent / "cookies.txt"
+if COOKIES_FILE.exists():
+    YTDL_OPTIONS["cookiefile"] = str(COOKIES_FILE)
 
 FFMPEG_OPTIONS = {
     "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
