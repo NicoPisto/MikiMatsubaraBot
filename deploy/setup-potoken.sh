@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Corrige o erro "Sign in to confirm you're not a bot" do YouTube em IPs de
-# datacenter, SEM precisar de conta/cookies. Duas peças são necessárias:
-#   1. Um runtime JavaScript (Deno) — sem ele o yt-dlp não consegue usar o
-#      cliente "web" do YouTube e cai para clientes (ex: android_vr) que o
-#      YouTube bloqueia com LOGIN_REQUIRED independente de PO Token.
-#   2. O provedor de PO Token (bgutil-ytdlp-pot-provider) — gera o token de
-#      verificação que o cliente "web" precisa apresentar.
+# datacenter, SEM precisar de conta/cookies. Três peças são necessárias:
+#   1. Um runtime JavaScript (Deno) — resolve as assinaturas/desafios que o
+#      YouTube exige antes de liberar a URL de qualquer formato.
+#   2. O componente remoto "ejs:github" — o script que o Deno executa para
+#      resolver esses desafios (cogs/music.py já pede ele via yt-dlp).
+#   3. O provedor de PO Token (bgutil-ytdlp-pot-provider) — gera o token de
+#      verificação que alguns clientes do YouTube exigem.
 # Uso: bash deploy/setup-potoken.sh
 set -euo pipefail
 
@@ -35,6 +36,10 @@ sudo docker run -d --name bgutil-provider --restart unless-stopped --init \
 
 echo "==> Instalando o plugin do yt-dlp e atualizando..."
 "$BOT_DIR/.venv/bin/pip" install --quiet -U yt-dlp bgutil-ytdlp-pot-provider
+
+echo "==> Testando a extração de áudio (baixa e cacheia o resolvedor de desafios)..."
+"$BOT_DIR/.venv/bin/yt-dlp" --remote-components ejs:github -f bestaudio --skip-download \
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 echo "==> Reiniciando a Miki..."
 sudo systemctl restart miki

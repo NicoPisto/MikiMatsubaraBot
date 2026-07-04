@@ -115,7 +115,7 @@ cd ~/MikiMatsubaraBot
 bash deploy/setup-potoken.sh
 ```
 
-O script instala Docker (se precisar), sobe o provedor num container e atualiza o yt-dlp. O yt-dlp detecta o provedor sozinho a partir daí — nada a configurar no código.
+O script instala o Deno (resolve os desafios de assinatura do YouTube), o Docker, sobe o provedor de PO Token num container e atualiza o yt-dlp. O `cogs/music.py` já pede o componente `ejs:github` automaticamente — nada mais a configurar depois de rodar o script.
 
 ### Opção B: cookies de uma conta logada
 
