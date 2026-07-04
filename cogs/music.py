@@ -16,6 +16,10 @@ YTDL_OPTIONS = {
     "no_warnings": True,
     "extract_flat": False,
     "skip_download": True,
+    # Necessário para o yt-dlp resolver as assinaturas do YouTube (via Deno) e
+    # tocar mesmo em IPs de datacenter, junto com o provedor de PO Token
+    # (deploy/setup-potoken.sh). Ver README.
+    "remote_components": ["ejs:github"],
 }
 
 # O YouTube bloqueia IPs de datacenter (Oracle, AWS...) com "Sign in to
