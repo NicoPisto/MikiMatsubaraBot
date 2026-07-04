@@ -1,18 +1,58 @@
+import logging
+import os
+
+import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+EXTENSIONS = (
+    "cogs.general",
+    "cogs.music",
+)
 
 
-#import all of the cogs
-from help_cog import help_cog
-from music_cog import music_cog
+class MikiBot(commands.Bot):
+    def __init__(self):
+        intents = discord.Intents.default()
+        intents.message_content = True  # necessário para comandos com prefixo "!"
+        intents.voice_states = True
 
-bot = commands.Bot(command_prefix='!')
+        super().__init__(
+            command_prefix=commands.when_mentioned_or("!"),
+            intents=intents,
+            help_command=None,
+            activity=discord.Activity(
+                type=discord.ActivityType.listening,
+                name="Mayonaka no Door 🎶",
+            ),
+        )
 
-#remove the default help command so that we can write out own
-bot.remove_command('help')
+    async def setup_hook(self):
+        for extension in EXTENSIONS:
+            await self.load_extension(extension)
+        # registra os slash commands (/play, /skip, etc.) no Discord
+        await self.tree.sync()
 
-#register the class with the bot
-bot.add_cog(help_cog(bot))
-bot.add_cog(music_cog(bot))
+    async def on_ready(self):
+        logging.getLogger("miki").info(
+            "Miki online como %s (ID %s)", self.user, self.user.id
+        )
 
-#start the bot with our token
-bot.run("OTgwMDY3NDQ0OTM4ODk5NDc3.Ge5HSq.VBdvu4x6KDC7gRK1LBBnioQrUHdCbC7FyxskMA")
+
+def main():
+    if not TOKEN:
+        raise SystemExit(
+            "Token não encontrado! Crie um arquivo .env com DISCORD_TOKEN=seu_token "
+            "(veja o .env.example)."
+        )
+
+    bot = MikiBot()
+    bot.run(TOKEN, log_level=logging.INFO)
+
+
+if __name__ == "__main__":
+    main()
