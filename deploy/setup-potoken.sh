@@ -13,6 +13,10 @@ BOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 if ! command -v deno > /dev/null; then
     echo "==> Instalando o runtime Deno..."
+    if ! command -v unzip > /dev/null; then
+        sudo apt-get update -y
+        sudo apt-get install -y unzip
+    fi
     curl -fsSL https://deno.land/install.sh | sh
     sudo ln -sf "$HOME/.deno/bin/deno" /usr/local/bin/deno
 fi
