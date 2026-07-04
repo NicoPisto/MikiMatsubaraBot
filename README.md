@@ -83,6 +83,25 @@ python main.py
 
 Os slash commands podem levar alguns minutos para aparecer no Discord na primeira vez.
 
+## Rodando 24/7 (Oracle Cloud, VPS, Raspberry Pi)
+
+Em qualquer máquina Ubuntu/Debian, o script de deploy instala tudo e deixa a Miki rodando como serviço do systemd (reinicia sozinha se crashar ou se a máquina reiniciar):
+
+```bash
+git clone https://github.com/NicoPisto/MikiMatsubaraBot.git
+cd MikiMatsubaraBot
+bash deploy/setup.sh   # pede o token e configura tudo
+```
+
+Comandos úteis depois de instalado:
+
+```bash
+systemctl status miki                      # ver se está rodando
+journalctl -u miki -f                      # logs ao vivo
+sudo systemctl restart miki                # reiniciar
+git pull && sudo systemctl restart miki    # atualizar o bot
+```
+
 ## Estrutura do projeto
 
 ```

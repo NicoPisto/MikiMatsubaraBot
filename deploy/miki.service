@@ -1,0 +1,17 @@
+# Serviço systemd da Miki — instalado automaticamente pelo deploy/setup.sh
+# ({{USER}} e {{DIR}} são substituídos pelos valores reais na instalação)
+
+[Unit]
+Description=Miki Matsubara Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{USER}}
+WorkingDirectory={{DIR}}
+ExecStart={{DIR}}/.venv/bin/python main.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
