@@ -104,7 +104,22 @@ git pull && sudo systemctl restart miki    # atualizar o bot
 
 ## YouTube pedindo login? ("Sign in to confirm you're not a bot")
 
-O YouTube bloqueia requisições vindas de IPs de datacenter (Oracle Cloud, AWS, etc.). A solução é dar à Miki os cookies de uma conta logada no YouTube:
+O YouTube bloqueia requisições vindas de IPs de datacenter (Oracle Cloud, AWS, etc.). Tem duas formas de resolver — a primeira não precisa de conta nenhuma:
+
+### Opção A (recomendada): provedor de PO Token, sem conta
+
+Roda um pequeno serviço local ([bgutil-ytdlp-pot-provider](https://github.com/Brainicism/bgutil-ytdlp-pot-provider)) que gera os tokens de verificação que o YouTube exige. Não usa cookies nem login de ninguém:
+
+```bash
+cd ~/MikiMatsubaraBot
+bash deploy/setup-potoken.sh
+```
+
+O script instala Docker (se precisar), sobe o provedor num container e atualiza o yt-dlp. O yt-dlp detecta o provedor sozinho a partir daí — nada a configurar no código.
+
+### Opção B: cookies de uma conta logada
+
+Se a opção A não resolver, o fallback é dar à Miki os cookies de uma conta do YouTube:
 
 1. **Crie uma conta Google descartável** só para isso (não use sua conta pessoal — contas usadas a partir de servidores podem ser sinalizadas pelo Google)
 2. No navegador, logado nessa conta, abra o [youtube.com](https://youtube.com) e toque qualquer vídeo
@@ -117,7 +132,9 @@ O YouTube bloqueia requisições vindas de IPs de datacenter (Oracle Cloud, AWS,
 
 A Miki detecta o `cookies.txt` automaticamente. O `.gitignore` já impede que ele vá parar no GitHub — **nunca compartilhe esse arquivo**, ele dá acesso à conta.
 
-Dica: se as músicas pararem de tocar no futuro, o primeiro passo é sempre atualizar o yt-dlp (o YouTube muda o site o tempo todo):
+### Dica geral
+
+Se as músicas pararem de tocar no futuro, o primeiro passo é sempre atualizar o yt-dlp (o YouTube muda o site o tempo todo):
 
 ```bash
 cd ~/MikiMatsubaraBot && .venv/bin/pip install -U yt-dlp && sudo systemctl restart miki
