@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
 # Corrige o erro "Sign in to confirm you're not a bot" do YouTube em IPs de
-# datacenter, SEM precisar de conta/cookies: instala o provedor de PO Token
-# (bgutil-ytdlp-pot-provider) como container Docker + plugin do yt-dlp.
+# datacenter, SEM precisar de conta/cookies. Duas peças são necessárias:
+#   1. Um runtime JavaScript (Deno) — sem ele o yt-dlp não consegue usar o
+#      cliente "web" do YouTube e cai para clientes (ex: android_vr) que o
+#      YouTube bloqueia com LOGIN_REQUIRED independente de PO Token.
+#   2. O provedor de PO Token (bgutil-ytdlp-pot-provider) — gera o token de
+#      verificação que o cliente "web" precisa apresentar.
 # Uso: bash deploy/setup-potoken.sh
 set -euo pipefail
 
 BOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if ! command -v deno > /dev/null; then
+    echo "==> Instalando o runtime Deno..."
+    curl -fsSL https://deno.land/install.sh | sh
+    sudo ln -sf "$HOME/.deno/bin/deno" /usr/local/bin/deno
+fi
+deno --version
 
 if ! command -v docker > /dev/null; then
     echo "==> Instalando Docker..."
@@ -25,6 +36,6 @@ echo "==> Reiniciando a Miki..."
 sudo systemctl restart miki
 
 echo
-echo "✅ Pronto! O yt-dlp detecta o provedor automaticamente."
+echo "✅ Pronto! O yt-dlp usa o Deno + o provedor de PO Token automaticamente."
 echo "   Ver o provedor:  sudo docker logs bgutil-provider"
 echo "   Ver a Miki:      journalctl -u miki -f"
